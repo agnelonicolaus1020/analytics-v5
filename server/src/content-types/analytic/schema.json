@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "analytics",
+  "info": {
+    "singularName": "analytic",
+    "pluralName": "analytics",
+    "displayName": "Analytics",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "event_type": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "clicked",
+        "viewed"
+      ]
+    },
+    "collection_name": {
+      "type": "string",
+      "required": true
+    },
+    "collection_id": {
+      "type": "string",
+      "required": true
+    },
+    "identifier": {
+      "type": "string"
+    },
+    "field": {
+      "type": "string"
+    },
+    "user_token": {
+      "type": "string"
+    },
+    "record_type": {
+      "type": "string"
+    }
+  }
+}
