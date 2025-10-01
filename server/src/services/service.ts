@@ -11,9 +11,10 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => ({
     return { data : analytics };
   },
 
-  async getAnalyticsWithFilters(obbj) {
+  async getAnalyticsWithFilters(obbj, config_analytics_hours) {
     const user = obbj.user.id ? obbj.user.id.toString() : (obbj.user.guest_id || '');
-    const analyticsHours = subHours(new Date(), strapi.config.get('plugin.analytics.analytics_hours'));
+    
+    const analyticsHours = subHours(new Date(), config_analytics_hours);
 
     const analyticsFilters = {
       $and: [
@@ -122,8 +123,6 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => ({
       filters,
     });
 
-    console.log(analytics.length);
-
     const groupedData = {};
 
     analytics.forEach((item) => {
@@ -189,10 +188,13 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => ({
     const { event_type, collection_name, collection_id, field, identifier, record_type = null } = ctx.request.body;
     const { user } = ctx.state;
 
-    const config_attempts_enabled = strapi.config.get('plugin.analytics.attempts_enabled') as boolean;
-    const config_attempts = strapi.config.get('plugin.analytics.analytics_attempts') as number;
+    const analyticsConfig = await strapi.documents('plugin::strapi-plugin-analytics-v5.analytic-config').findFirst();
+
+    const config_attempts_enabled = analyticsConfig?.attempts_enabled;
+    const config_attempts = analyticsConfig?.analytics_attempts;
+    const config_analytics_hours = analyticsConfig?.analytics_hours;
     if(config_attempts_enabled) {
-      const exists = await this.getAnalyticsWithFilters({ event_type, collection_name, collection_id, field, user });
+      const exists = await this.getAnalyticsWithFilters({ event_type, collection_name, collection_id, field, user }, config_analytics_hours);
 
       if (exists?.length >= config_attempts) {
         return ctx.badRequest('Analytics per day exceeded');
@@ -210,7 +212,7 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => ({
       publishedAt: new Date()
     };
 
-    const analytics = await strapi.entityService.create(uid, { data });
+    const analytics = await strapi.documents(uid).create({ data });
 
     if (analytics?.id) {
       return {

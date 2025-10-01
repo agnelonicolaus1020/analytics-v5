@@ -1,0 +1,28 @@
+{
+  "kind": "singleType",
+  "collectionName": "analytic-config",
+  "info": {
+    "singularName": "analytic-config",
+    "pluralName": "analytic-configs",
+    "displayName": "Analytics Configuration",
+    "description": "Configuration settings for strapi-plugin-analytics-v5"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "attempts_enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "analytics_hours": {
+      "type": "integer",
+      "default": 24
+    },
+    "analytics_attempts": {
+      "type": "integer",
+      "default": 5
+    }
+  }
+}
